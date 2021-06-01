@@ -1,0 +1,91 @@
+.layout{
+    width: 1060px;
+    margin: 50px auto;
+}
+.layout .main dl{
+    display: flex;
+    flex-direction: column;
+}
+.layout .main ul li{
+    width: 100px;
+    height: 100px;
+    border: 1px solid #333;
+    border-radius: 60px;
+    margin: 2px;
+    float: left;
+    transition: 0.4s;
+}
+.main dd:nth-child(1){
+    position: relative;
+}
+
+.main dd:nth-child(1) .ready{
+    background-color: rgba(210, 87, 128, 0.4);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    top: 0%;
+    left: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 300px;
+    color: #fff;
+    transform: scale(0);
+    transition: 0.7s;
+}
+.main dd:nth-child(1) .finish{
+    border:3px solid rgba(210, 87, 128, 0.4);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    top: 0%;
+    left: 0%;
+    border-radius: 8px;
+}
+.main dd:nth-child(1) .on{
+    transform: rotateY(180deg);
+}
+.main dl dd:nth-child(2){
+    margin-top: 50px;
+    margin-left: auto;
+}
+.main dl dd:nth-child(2) p{
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.main dl dd:nth-child(2) strong{
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.main dd:nth-child(2) .on{
+    background-color: #fff;
+    border: 1px solid #333;
+}
+dd:nth-child(2) .result li{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+}
+
+
+
+
+.slt_1{
+    background-color: #2b2e4a;
+}
+.slt_2{
+    background-color: #e84545;
+}
+.slt_3{
+    background-color: #903749;
+}
+.slt_4{
+    background-color: #53354a;
+}

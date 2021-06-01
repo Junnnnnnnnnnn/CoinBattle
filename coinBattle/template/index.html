@@ -3,12 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="../static/reset.css" />
+    <link rel="stylesheet" href="../static/main.css" />
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        var $___SOCK = io();
+        var $___INFO = new Object();
+        $(function(){
+            start();
+
+            $___SOCK.on("connect",function(result){
+                if(result){
+                    $___INFO.sid = result;
+                    $___SOCK.emit("initColor");
+                }
+            });
+            $___SOCK.on("initColor",function(result){
+                if(result){
+                    $("dd:nth-child(2) li").removeClass("on");
+                    for(var i in result){
+                        $("dd:nth-child(2) li:nth-child("+ (result[i].index + 1) +")").addClass("on");
+                    }
+                }
+            });
+
+            $(document).on("click",".main dd:nth-child(1) li",function(){
+                var index = $(this).index();
+                $___SOCK.emit("changeCoin",index=index, color=$___INFO.color, className = $___INFO.className);
+            });
+
+            $___SOCK.on("changeCoin",function(result){
+                if(result){
+                    $li = $("dd:nth-child(1) li:nth-child("+ (result.index + 1) +")")
+                    $li.css("background-color",result.color);
+                    $li.attr("data-slt",result.className);
+                    $li.toggleClass("on");
+                }
+            });
+
+            $(document).on("click",".color .sltColor li:not(.on)",function(){
+                var className = $(this).attr("class");
+                var color = $(this).css("background-color");
+                var index = $(this).index();
+                if($___INFO.color == null){
+                    $___INFO.color = color;
+                    $___INFO.className = className;
+                    $___SOCK.emit("setting",sid=$___INFO.sid,data=$___INFO.color, index=index);
+                }
+                $(".main dl dd:nth-child(2)").html('<strong>기다리는 중...</strong>');
+            });
+            $___SOCK.on("setting",function(result){
+                if(result){
+                    $("dd:nth-child(2) li:nth-child("+ (result.index + 1) +")").addClass("on");
+                }
+            });
+
+            $___SOCK.on("ready",function(result){
+                if(result){
+                    initCoin();
+                    $(".ready").css("transform", "scale(1)");
+                    setInterval(function(){
+                        $(".ready").html($___INFO.count);
+                        $___INFO.count--;
+
+                        if($___INFO.count==0){
+                            clearInterval();
+                            $(".ready").css("transform", "scale(0)");
+                            startGame();
+                        }
+                    }, 1000);
+                }
+            });
+        });
+
+        function initCoin(){
+            $(".main dd:nth-child(1) ul li").removeClass("on");
+            $(".main dd:nth-child(1) ul li").removeAttr("data-slt");
+            $(".main dd:nth-child(1) ul li").css("background-color","#fff");
+        }
+        function startGame(){
+            $(".main dl dd:nth-child(2)").html('<strong></strong>');
+            var num = 60 * 1;
+            setInterval(function(){
+                var min = num / 60;
+                min = Math.floor(min);
+
+                var sec = num - (60 * min);
+                var $input = $('.main dl dd:nth-child(2) strong').html(+min + '분' + sec + '초');
+
+                num--;
+                if(num == 0){
+                    clearInterval();
+                    resultGame();
+                }
+            },1000)
+        }
+        function resultGame(){
+            $(".main dl dd:nth-child(1)").append('<div class="finish"></div>');
+            $(".main dl dd:nth-child(2)").html(
+                    '<p>결과발표</p>'+
+                    '<ul class="result"></ul>'
+            );
+            var obj = {
+                slt_1: 0,
+                slt_2: 0,
+                slt_3: 0,
+                slt_4: 0,
+            }
+            $("dd:nth-child(1) ul li").each(function(){
+                var slt = $(this).attr("data-slt");
+                switch(slt){
+                    case "slt_1":
+                        obj.slt_1++
+                        break;
+                    case "slt_2":
+                        obj.slt_2++
+                        break;
+                    case "slt_3":
+                        obj.slt_3++
+                        break;
+                    case "slt_4":
+                        obj.slt_4++
+                        break;
+                }
+            });
+            
+            for(key in obj){
+                $(".main dl dd:nth-child(2) ul").append(
+                    '<li class="'+ key +'">'+
+                        '<span>'+ obj[key] +'</span>'+
+                    '</li>'
+                );
+            }
+        }
+        function start(){
+            $___INFO.count = 2;
+
+            for(var i = 0; i < 50; i++){
+                $(".main dd:nth-child(1) ul").append('<li></li>');
+            }
+        }
     </script>
 </head>
 <body>
-    <div></div>
+    <div class="layout">
+        <div class="main">
+            <dl>
+                <dd>
+                    <ul></ul>
+                    <div class="ready"></div>
+                </dd>
+                <dd>
+                    <div class="color">
+                        <p>색깔을 정하세요</p>
+                        <div class="sltColor">
+                            <ul>
+                                <li class="slt_1"></li>
+                                <li class="slt_2"></li>
+                                <li class="slt_3"></li>
+                                <li class="slt_4"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </div>
 </body>
 </html>

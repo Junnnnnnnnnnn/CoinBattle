@@ -9,6 +9,8 @@ def create_app():
     app.secret_key = "YOTDARK_SECERT_KEY"
     from coinBattle.com.home.controller import HomeController
     app.register_blueprint(HomeController.bp)
+    from coinBattle.com.home.controller import HomeSocketController
+    app.register_blueprint(HomeSocketController.bp)
 
     socket.init_app(app)
 
